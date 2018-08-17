@@ -5,7 +5,7 @@
 
 # Maintainer: The Almighty Pegasus Epsilon <pegasus@pimpninjas.org>
 pkgname=kmscon-patched-git
-pkgver=8.21.g7b049ce
+pkgver=8.35.g3f8b688
 pkgrel=1
 pkgdesc="Linux KMS/DRM based virtual Console Emulator http://www.freedesktop.org/wiki/Software/kmscon"
 url="https://github.com/dvdhrm/kmscon"
@@ -28,9 +28,22 @@ build() {
 }
 
 check() { make -k check; }
+
 package() {
 	make DESTDIR="$pkgdir/" install
-	mkdir -p $pkgdir/usr/lib/systemd/system
-	cp docs/kmsconvt@.service $pkgdir/usr/lib/systemd/system/kmsconvt@.service
+	libtool --finish /usr/lib/kmscon
+	if [ -e /usr/lib/systemd ]; then
+		mkdir -p $pkgdir/usr/lib/systemd/system
+		cp docs/kmsconvt@.service $pkgdir/usr/lib/systemd/system/kmsconvt@.service
+	else
+		if [ -e /etc/init.d -a -e /etc/conf.d ]; then
+			mkdir -p $pkgdir/etc/init.d
+			cp kmscon $pkgdir/etc/init.d
+			for i in 1 2 3 4 5 6; do
+				ln -s kmscon $pkgdir/etc/init.d/kmscon.vt$i
+			done
+		fi
+	fi
 }
+
 pkgver() { git describe | sed -e 's/[^-]\+-//;s/-/./g'; }

@@ -30,17 +30,33 @@ check() { make -k check; }
 
 package() {
 	make DESTDIR="$pkgdir/" install
+
+	# keymap
+	grep -v xkb-keymap ../kmscon.conf > kmscon.conf.tmp
+	mv kmscon.conf.tmp ../kmscon.conf
+	if [ -e /etc/conf.d ]; then
+		mkdir -p $pkgdir/etc/conf.d
+		cp ../kmscon.keymap $pkgdir/etc/conf.d
+		echo xkb-keymap=/etc/conf.d/kmscon.keymap >> ../kmscon.conf
+	else
+		mkdir -p $pkgdir/etc/kmscon
+		cp ../kmscon.conf $pkgdir/etc/kmscon
+		echo xkb-keymap=/etc/kmscon/kmscon.keymap >> ../kmscon.conf
+	fi
+
+	# systemd
 	if [ -d /usr/lib/systemd ]; then
 		mkdir -p $pkgdir/usr/lib/systemd/system
 		cp docs/kmsconvt@.service $pkgdir/usr/lib/systemd/system/kmsconvt@.service
+		cp ../kmscon.keymap $pkgdir/etc/kmscon
 	fi
+
+	# openrc
 	if [ -d /etc/init.d -a -d /etc/conf.d ]; then
 		pwd
 		mkdir -p $pkgdir/etc/init.d
 		cp ../kmscon $pkgdir/etc/init.d
-		mkdir -p $pkgdir/etc/conf.d
 		cp ../kmscon.conf $pkgdir/etc/conf.d
-		cp ../kmscon.keymap $pkgdir/etc/conf.d
 		for i in 2 3 4 5 6; do
 			ln -s kmscon $pkgdir/etc/init.d/kmscon.vt$i
 		done

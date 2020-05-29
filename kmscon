@@ -14,7 +14,7 @@ supervisor=supervise-daemon
 port="${RC_SVCNAME#*.vc}"
 term_type="${term_type:-linux}"
 command=/sbin/kmscon
-command_args_foreground="--font-name 'DejaVu Sans Mono for Powerline Book' --font-size 20 --no-switchvt --vt ${port} --seats=seat0"
+command_args_foreground="--font-name 'DejaVu Sans Mono for Powerline Book' --font-size 20 --no-switchvt --vt ${port} --seats=seat0 --hwaccel"
 pidfile="/run/${RC_SVCNAME}.pid"
 
 depend() {

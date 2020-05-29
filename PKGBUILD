@@ -12,8 +12,9 @@ conflicts=('kmscon' 'kmscon-git')
 replaces=('kmscon' 'kmscon-git')
 
 prepare() {
-	# Aetf's branch is still getting updates, dvdhrm's branch is dead since 2014.
-	git clone https://github.com/Aetf/kmscon.git . || \
+	# Most recent branch I can find.
+	# Feel free to replace with one you like better.
+	git clone https://github.com/CarlosNihelton/kmscon.git . || \
 	git pull
 # if it breaks, check out a working version.
 #	git checkout 3f8b688221c059ae8945420d4b3fded288e13169 .

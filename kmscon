@@ -10,11 +10,12 @@
 # except according to the terms contained in the LICENSE file.
 
 description="start kmscon on a virtual terminal"
-supervisor=supervise-daemon
 port="${RC_SVCNAME#*.vc}"
+supervisor=supervise-daemon
+supervise_daemon_args="-1 /var/log/kmscon.${port}.log -2 /var/log/kmscon.${port}.log"
 term_type="${term_type:-linux}"
 command=/sbin/kmscon
-command_args_foreground="--font-name 'DejaVu Sans Mono for Powerline Book' --font-size 20 --no-switchvt --vt ${port} --seats=seat0 --hwaccel"
+command_args_foreground="--vt ${port} --seats=seat0 -c /etc/conf.d"
 pidfile="/run/${RC_SVCNAME}.pid"
 
 depend() {

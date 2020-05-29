@@ -1,6 +1,6 @@
 # Maintainer: The Almighty Pegasus Epsilon <pegasus@pimpninjas.org>
 pkgname=arch-kmscon-custom
-pkgver=8.40.g01dd0a2
+pkgver=8.41.g3e15a2d
 pkgrel=1
 pkgdesc="Linux KMS/DRM based virtual Console Emulator http://www.freedesktop.org/wiki/Software/kmscon"
 url="https://github.com/dvdhrm/kmscon"
@@ -30,17 +30,20 @@ check() { make -k check; }
 
 package() {
 	make DESTDIR="$pkgdir/" install
-	if [ -e /usr/lib/systemd ]; then
+	if [ -d /usr/lib/systemd ]; then
 		mkdir -p $pkgdir/usr/lib/systemd/system
 		cp docs/kmsconvt@.service $pkgdir/usr/lib/systemd/system/kmsconvt@.service
-	else
-		if [ -e /etc/init.d -a -e /etc/conf.d ]; then
-			mkdir -p $pkgdir/etc/init.d
-			cp ../kmscon $pkgdir/etc/init.d
-			for i in 2 3 4 5 6; do
-				ln -s kmscon $pkgdir/etc/init.d/kmscon.vt$i
-			done
-		fi
+	fi
+	if [ -d /etc/init.d -a -d /etc/conf.d ]; then
+		pwd
+		mkdir -p $pkgdir/etc/init.d
+		cp ../kmscon $pkgdir/etc/init.d
+		mkdir -p $pkgdir/etc/conf.d
+		cp ../kmscon.conf $pkgdir/etc/conf.d
+		cp ../kmscon.keymap $pkgdir/etc/conf.d
+		for i in 2 3 4 5 6; do
+			ln -s kmscon $pkgdir/etc/init.d/kmscon.vt$i
+		done
 	fi
 }
 
